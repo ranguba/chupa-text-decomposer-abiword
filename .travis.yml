@@ -1,0 +1,12 @@
+notifications:
+  webhooks:
+    - https://webhook.commit-email.info/
+dist: xenial
+addons:
+  apt:
+    packages:
+      - abiword
+rvm:
+  - 2.4
+  - 2.5
+  - 2.6
