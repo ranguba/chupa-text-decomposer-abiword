@@ -57,6 +57,14 @@ module ChupaText
           MIME_TYPES.include?(data.mime_type)
       end
 
+      def target_score(data)
+        if target?(data)
+          10
+        else
+          nil
+        end
+      end
+
       def decompose(data)
         pdf_data = convert_to_pdf(data)
         return if pdf_data.nil?
