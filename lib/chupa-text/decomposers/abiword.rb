@@ -66,30 +66,9 @@ module ChupaText
       end
 
       def decompose(data)
-        pdf_data = convert_to_pdf(data)
-        return if pdf_data.nil?
-        yield(pdf_data)
-      end
-
-      private
-      def find_command
-        candidates = [
-          @options[:abiword],
-          ENV["ABIWORD"],
-          "abiword",
-        ]
-        candidates.each do |candidate|
-          next if candidate.nil?
-          command = ExternalCommand.new(candidate)
-          return command if command.exist?
-        end
-        nil
-      end
-
-      def convert_to_pdf(data)
-        create_tempfiles(data) do |pdf, stdout, stderr|
-          succeeded = @command.run("--to", "pdf",
-                                   "--to-name", pdf.path,
+        create_tempfiles(data) do |text, stdout, stderr|
+          succeeded = @command.run("--to", "text",
+                                   "--to-name", text.path,
                                    data.path.to_s,
                                    {
                                      data: data,
@@ -107,26 +86,38 @@ module ChupaText
                 "error: <#{stderr.read}>",
               ].join("\n")
             end
-            return nil
+            return
           end
-          normalized_pdf_uri = data.uri.to_s.gsub(/\.[^.]+\z/, ".pdf")
-          File.open(pdf.path, "rb") do |pdf_input|
-            VirtualFileData.new(normalized_pdf_uri,
-                                pdf_input,
-                                source_data: data)
+          File.open(text.path) do |text_input|
+            yield(TextData.new(text_input.read, source_data: data))
           end
         end
       end
 
+      private
+      def find_command
+        candidates = [
+          @options[:abiword],
+          ENV["ABIWORD"],
+          "abiword",
+        ]
+        candidates.each do |candidate|
+          next if candidate.nil?
+          command = ExternalCommand.new(candidate)
+          return command if command.exist?
+        end
+        nil
+      end
+
       def create_tempfiles(data)
         basename = File.basename(data.path)
-        pdf = Tempfile.new([basename, ".pdf"])
+        text = Tempfile.new([basename, ".txt"])
         stdout = Tempfile.new([basename, ".stdout.log"])
         stderr = Tempfile.new([basename, ".stderr.log"])
         begin
-          yield(pdf, stdout, stderr)
+          yield(text, stdout, stderr)
         ensure
-          pdf.close!
+          text.close!
           stdout.close!
           stderr.close!
         end

@@ -58,7 +58,7 @@ class TestRtf < Test::Unit::TestCase
 
     sub_test_case("one page") do
       def test_body
-        assert_equal(["Page1\n"], decompose.collect(&:body))
+        assert_equal(["Page1"], decompose.collect(&:body))
       end
 
       private
@@ -69,7 +69,7 @@ class TestRtf < Test::Unit::TestCase
 
     sub_test_case("multi pages") do
       def test_body
-        assert_equal([<<-BODY], decompose.collect(&:body))
+        assert_equal([<<-BODY.chomp], decompose.collect(&:body))
 Page1
 Page2
         BODY

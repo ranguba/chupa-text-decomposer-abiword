@@ -71,6 +71,7 @@ class TestDoc < Test::Unit::TestCase
       def test_body
         assert_equal([<<-BODY], decompose.collect(&:body))
 Page1
+\f
 Page2
         BODY
       end
