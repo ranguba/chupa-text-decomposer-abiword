@@ -27,31 +27,10 @@ module DecomposeHelper
   def decompose(path)
     data = ChupaText::InputData.new(path)
 
-    pdf_decomposer = ChupaText::Decomposers::PDF.new({})
     decomposed = []
     @decomposer.decompose(data) do |decomposed_data|
-      if pdf_decomposer.target?(decomposed_data)
-        pdf_decomposer.decompose(decomposed_data) do |pdf_decomposed_data|
-          decomposed << pdf_decomposed_data
-        end
-      else
-        decomposed << decomposed_data
-      end
+      decomposed << decomposed_data
     end
     decomposed
-  end
-
-  def normalize_producers(producers)
-    producers.collect do |producer|
-      normalize_producer(producer)
-    end
-  end
-
-  def normalize_producer(producer)
-    if /\Acairo \d+\.\d+\.\d+ \(https:\/\/cairographics\.org\)\z/ =~ producer
-      "cairo"
-    else
-      producer
-    end
   end
 end
