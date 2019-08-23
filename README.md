@@ -30,6 +30,8 @@ Now, you can extract text and meta-data from office documents:
 
   * Sutou Kouhei `<kou@clear-code.com>`
 
+  * Shimadzu Corporation
+
 ## License
 
 LGPL 2.1 or later.
